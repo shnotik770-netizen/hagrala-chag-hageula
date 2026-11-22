@@ -171,6 +171,17 @@
 
   function initFrame() {
     frame = $('NedarimFrame');
+    // האייפרם של נדרים לא שולח גובה לפני שמקבל StartPayment — שולחים מיד כשהוא נטען
+    frame.addEventListener('load', function () {
+      if (!pendingStart || frame.src.indexOf('matara.pro') === -1) return;
+      var start = pendingStart;
+      setTimeout(function () {
+        if (pendingStart !== start) return;
+        postNedarim(start);
+        pendingStart = null;
+        frameReady = true;
+      }, 400);
+    });
     window.addEventListener('message', function (event) {
       if (!/(^|\.)matara\.pro$/.test(new URL(event.origin || 'http://x').hostname)) return;
       var msg = event.data || {};
