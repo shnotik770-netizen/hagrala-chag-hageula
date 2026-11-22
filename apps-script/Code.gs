@@ -54,7 +54,7 @@ var O = { ID: 1, CLIENT: 2, CREATED: 3, STATUS: 4, QTY: 5, AMOUNT: 6, NAME: 7, P
 function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) || 'ping';
   if (action === 'config') return json_(publicConfig_());
-  return json_({ ok: true, service: 'hagrala-yud-tet-kislev' });
+  return json_({ ok: true });
 }
 
 function doPost(e) {
@@ -518,13 +518,13 @@ function sendEmail_(order, tickets) {
 
 function adminLogin_(body) {
   var pass = prop_('ADMIN_PASSWORD');
-  if (!pass) throw userError_('לא הוגדרה סיסמת ניהול (ADMIN_PASSWORD).');
+  if (!pass) throw userError_('הכניסה אינה זמינה כרגע.');
   var cache = CacheService.getScriptCache();
   var fails = Number(cache.get('admin_fails') || 0);
-  if (fails >= 10) throw userError_('יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.');
+  if (fails >= 10) throw userError_('הכניסה נכשלה.');
   if (String(body.password || '') !== pass) {
     cache.put('admin_fails', String(fails + 1), 600);
-    throw userError_('סיסמה שגויה.');
+    throw userError_('הכניסה נכשלה.');
   }
   var token = uuid_() + uuid_();
   cache.put('admin_' + token, '1', 21600); // 6 שעות
@@ -612,7 +612,7 @@ function adminResendSms_(body) {
     if (String(rowsAll[i][0]).slice(0, 8) === short) {
       var order = getOrder_(i + 2);
       var ok = sendSms_(order, ticketsForOrder_(order.id));
-      if (!ok) throw userError_('שליחת ה-SMS נכשלה (בדקו את YEMOT_TOKEN ואת לשונית הלוג).');
+      if (!ok) throw userError_('שליחת ה-SMS נכשלה.');
       return { ok: true };
     }
   }
