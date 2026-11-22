@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ניהול הגרלה • חג הגאולה י"ט כסלו</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./"><span class="brand-badge">חב"ד</span> ניהול הגרלת י"ט כסלו</a>
+      <div><a href="#" id="logout" hidden style="color:var(--gold-2);font-weight:700">יציאה</a></div>
+    </div>
+  </div>
+
+  <div class="admin-wrap">
+    <form class="card" id="login" style="max-width:420px;margin:40px auto;text-align:center">
+      <div style="font-size:40px" aria-hidden="true">🔐</div>
+      <h2>כניסת מנהלים</h2>
+      <p class="lead" style="margin-bottom:16px">הסיסמה מוגדרת בהגדרות הסקריפט (ADMIN_PASSWORD)</p>
+      <div class="field"><input type="password" id="pass" placeholder="סיסמת מנהל" autocomplete="current-password" style="text-align:center"></div>
+      <div class="alert" id="login-err" hidden style="margin-top:12px"></div>
+      <button class="cta" style="margin-top:14px;font-size:18px" id="login-btn">כניסה</button>
+    </form>
+
+    <div id="dash" hidden>
+      <div class="stats">
+        <div class="stat"><span>סה"כ כרטיסים</span><b id="st-tickets">0</b></div>
+        <div class="stat"><span>הכנסות באשראי</span><b id="st-revenue" style="color:var(--ok)">0 ₪</b></div>
+        <div class="stat"><span>כרטיסים בקוד מורשה</span><b id="st-coupon" style="color:#a46a00">0</b></div>
+        <div class="stat"><span>הזמנות ממתינות</span><b id="st-pending" style="color:#3b2a20">0</b></div>
+      </div>
+
+      <div class="card admin-card" id="pending-card" hidden>
+        <h3>⏳ הזמנות שממתינות לאישור תשלום</h3>
+        <p class="lead">הזמנה שהלקוח פתח בה דף תשלום ונדרים פלוס עוד לא אישרו. אם בדקתם בנדרים פלוס שהתשלום עבר ולא הגיע אישור — אפשר לאשר ידנית.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>נוצר</th><th>שם</th><th>טלפון</th><th>כמות</th><th>סכום</th><th>מזהה עסקה</th><th>הערה</th><th></th></tr></thead>
+          <tbody id="pending-body"></tbody>
+        </table></div>
+      </div>
+
+      <div class="card admin-card">
+        <h3>🎟️ מורשים וקודי קופון (רישום ללא חיוב)</h3>
+        <p class="lead">כל מורשה מקבל קוד אישי לרישום כרטיסים בלי חיוב. נשמר בלשונית "מורשים" בגיליון.</p>
+        <form class="add-coupon" id="add-coupon">
+          <input id="c-owner" placeholder="שם המורשה" required>
+          <input id="c-code" placeholder="קוד (אותיות לועזיות/ספרות)" class="ltr" required>
+          <input id="c-limit" type="number" min="1" placeholder="מגבלת כרטיסים (ריק = ללא)">
+          <button class="btn maroon">+ הוספה</button>
+        </form>
+        <div class="table-wrap"><table>
+          <thead><tr><th>שם המורשה</th><th>קוד</th><th>כרטיסים שנרשמו</th><th>מגבלה</th><th>סטטוס</th><th></th></tr></thead>
+          <tbody id="coupons-body"></tbody>
+        </table></div>
+      </div>
+
+      <div class="card admin-card">
+        <div class="toolbar">
+          <div>
+            <h3>📊 משתתפים בהגרלה</h3>
+            <p class="lead" style="margin:0">כל כרטיס בשורה נפרדת • <a id="sheet-link" target="_blank" rel="noopener">פתיחת הגיליון ב-Google Sheets</a></p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="search" placeholder="חיפוש: שם, טלפון, מס' כרטיס…">
+            <button class="btn light" id="refresh">↻ רענון</button>
+            <button class="btn green" id="csv">ייצוא CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>מס' כרטיס</th><th>תאריך</th><th>שם על הכרטיס</th><th>שם המשלם</th><th>טלפון</th><th>אימייל</th><th>אופן רישום</th><th>סכום</th><th></th></tr></thead>
+          <tbody id="tickets-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/admin.js"></script>
+</body>
+</html>
