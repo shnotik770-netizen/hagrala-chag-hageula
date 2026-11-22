@@ -35,9 +35,6 @@
   function setQty(n) {
     state.qty = Math.max(1, Math.min(MAX, n));
     $('qty').textContent = state.qty;
-    document.querySelectorAll('#quick button').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(Number(b.dataset.q) === state.qty));
-    });
     renderNames();
     if (state.coupon) { // מכסת קופון תלויה בכמות — מאמתים מחדש
       state.coupon = null;
@@ -304,9 +301,6 @@
 
     $('qty-minus').onclick = function () { setQty(state.qty - 1); };
     $('qty-plus').onclick = function () { setQty(state.qty + 1); };
-    document.querySelectorAll('#quick button').forEach(function (b) {
-      b.onclick = function () { setQty(Number(b.dataset.q)); };
-    });
     $('payer-name').addEventListener('input', function () {
       var first = document.querySelector('.ticket-name');
       if (first && !first.dataset.edited) first.value = this.value;
@@ -321,7 +315,7 @@
     $('order-form').addEventListener('submit', submit);
     $('pay-close').onclick = closePayment;
     $('done-close').onclick = function () { $('done-modal').classList.remove('open'); };
-    $('done-again').onclick = function () { $('done-modal').classList.remove('open'); $('buy').scrollIntoView({ behavior: 'smooth' }); };
+    $('done-again').onclick = function () { $('done-modal').classList.remove('open'); $('order-form').scrollIntoView({ behavior: 'smooth' }); };
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && $('done-modal').classList.contains('open')) $('done-modal').classList.remove('open');
     });

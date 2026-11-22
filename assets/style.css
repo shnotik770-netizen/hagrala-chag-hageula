@@ -125,7 +125,7 @@ a { color: inherit; }
 .ticket-big .serial b { display: block; font-size: 20px; letter-spacing: 2px; color: var(--maroon-d); font-variant-numeric: tabular-nums; }
 
 /* ---------- Sections ---------- */
-section { scroll-margin-top: 84px; }
+section, #order-form { scroll-margin-top: 90px; }
 .sec { padding: 76px 0; }
 .sec-head { text-align: center; max-width: 640px; margin: 0 auto 36px; }
 .sec-head .kick { color: var(--gold-d); font-weight: 800; font-size: 14px; letter-spacing: .5px; }
