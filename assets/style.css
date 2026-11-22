@@ -267,6 +267,9 @@ section, #order-form { scroll-margin-top: 90px; }
 .pay-methods { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
 .pay-methods span { font-size: 12px; font-weight: 700; color: #5a4030; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px; }
 .secure { text-align: center; font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+#coupon.masked { -webkit-text-security: disc; text-security: disc; letter-spacing: 2px; }
+.coupon-side { margin-top: 14px; background: var(--paper); border: 1px dashed #d9c49b; border-radius: 16px; padding: 12px 14px; }
+.coupon-side .msg.ok { background: #ecf7f0; border: 1px solid #bfe3cd; border-radius: 10px; padding: 8px 10px; line-height: 1.5; }
 .side-note { margin-top: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; font-size: 14.5px; color: #5a4030; }
 .side-note b { color: var(--maroon); display: block; }
 

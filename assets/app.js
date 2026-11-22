@@ -36,11 +36,8 @@
     state.qty = Math.max(1, Math.min(MAX, n));
     $('qty').textContent = state.qty;
     renderNames();
-    if (state.coupon) { // מכסת קופון תלויה בכמות — מאמתים מחדש
-      state.coupon = null;
-      setCouponMsg('הכמות השתנתה — יש ללחוץ שוב על "החל"', 'err');
-    }
     updateSummary();
+    if (state.coupon) revalidateCoupon(); // הקוד חל על כל ההזמנה — בודקים שהמכסה עדיין מספיקה
   }
 
   function renderNames() {
@@ -69,7 +66,7 @@
     $('sum-qty').textContent = state.qty;
     if (state.coupon) {
       $('sum-disc-row').hidden = false;
-      $('sum-disc').textContent = '−' + total + ' ₪ (' + state.coupon.code + ')';
+      $('sum-disc').textContent = state.coupon.owner + ' (−' + total + ' ₪)';
       $('sum-total').textContent = '0 ₪';
       $('submit-text').textContent = 'רישום ' + state.qty + (state.qty === 1 ? ' כרטיס' : ' כרטיסים') + ' ללא חיוב';
     } else {
@@ -86,6 +83,28 @@
     m.className = 'msg' + (kind ? ' ' + kind : '');
   }
 
+  function okMsg(owner) {
+    return '✓ הקוד של ' + owner + ' אושר וחל על כל ההזמנה. שימו לב: הרישום עוד לא הושלם — לחצו על "' +
+      $('submit-text').textContent + '" כדי לסיים.';
+  }
+
+  var revalTimer = null;
+  function revalidateCoupon() {
+    clearTimeout(revalTimer);
+    var c = state.coupon;
+    setCouponMsg(okMsg(c.owner), 'ok');
+    revalTimer = setTimeout(function () {
+      api('checkCoupon', { code: c.code, qty: state.qty }).then(function () {
+        if (state.coupon === c) setCouponMsg(okMsg(c.owner), 'ok');
+      }).catch(function (e) {
+        if (state.coupon !== c) return;
+        state.coupon = null;
+        updateSummary();
+        setCouponMsg('✗ ' + e.message, 'err');
+      });
+    }, 500);
+  }
+
   function applyCoupon() {
     var code = $('coupon').value.trim().toUpperCase();
     state.coupon = null;
@@ -97,8 +116,9 @@
     api('checkCoupon', { code: code, qty: state.qty })
       .then(function (res) {
         state.coupon = { code: res.code, owner: res.owner };
-        setCouponMsg('✓ הקוד אושר (' + res.owner + ') — רישום ללא חיוב', 'ok');
+        $('coupon').classList.add('masked');
         updateSummary();
+        setCouponMsg(okMsg(res.owner), 'ok');
       })
       .catch(function (e) { setCouponMsg('✗ ' + e.message, 'err'); })
       .finally(function () { btn.disabled = false; });
@@ -272,6 +292,7 @@
   function resetForm() {
     state.coupon = null;
     $('coupon').value = '';
+    $('coupon').classList.remove('masked');
     setCouponMsg('', '');
     $('names').innerHTML = '';
     setQty(1);
@@ -329,6 +350,7 @@
       document.querySelectorAll('.ticket-name').forEach(function (i) { i.value = n; });
     };
     $('apply-coupon').onclick = applyCoupon;
+    $('coupon').addEventListener('input', function () { this.classList.remove('masked'); });
     $('coupon').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); } });
     $('order-form').addEventListener('submit', submit);
     $('pay-close').onclick = closePayment;

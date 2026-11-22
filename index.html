@@ -254,24 +254,13 @@
               </div>
             </div>
 
-            <div class="step">
+            <div class="step last">
               <div class="step-h">
                 <h3><span class="n">3</span>על שם מי הכרטיסים?</h3>
                 <button type="button" class="link-btn" id="fill-all">שם המזמין לכולם</button>
               </div>
               <p class="hint">אפשר לרשום כל כרטיס על שם בן משפחה או חבר.</p>
               <div class="names" id="names"></div>
-            </div>
-
-            <div class="step last">
-              <details class="coupon">
-                <summary>יש לי קוד מורשה (רישום ללא חיוב)</summary>
-                <div class="inline">
-                  <input id="coupon" class="ltr" placeholder="קוד מורשה" autocomplete="off" autocapitalize="characters">
-                  <button type="button" class="btn-dark" id="apply-coupon">החל</button>
-                </div>
-                <div class="msg" id="coupon-msg" role="status"></div>
-              </details>
             </div>
           </div>
 
@@ -287,6 +276,14 @@
             <button type="submit" class="cta" id="submit"><span id="submit-text">המשך לתשלום • 25 ₪</span><span aria-hidden="true">🔒</span></button>
             <div class="pay-methods" aria-label="אמצעי תשלום"><span>אשראי</span><span>ביט</span><span>Google Pay</span><span>Apple Pay</span></div>
             <p class="secure">סליקה מאובטחת של נדרים פלוס</p>
+            <details class="coupon coupon-side" id="coupon-box">
+              <summary>יש לי קוד מורשה (רישום ללא חיוב)</summary>
+              <div class="inline">
+                <input id="coupon" class="ltr" placeholder="קוד מורשה" autocomplete="off" autocapitalize="characters" inputmode="text">
+                <button type="button" class="btn-dark" id="apply-coupon">החל</button>
+              </div>
+              <div class="msg" id="coupon-msg" role="status"></div>
+            </details>
             <div class="side-note"><b>אפשר לרכוש גם במקום:</b>בחנות בית חב"ד יודאייקה, שדרות ארלוזורוב 26, ובכניסה לאירוע.</div>
           </aside>
         </form>
