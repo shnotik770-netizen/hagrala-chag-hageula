@@ -22,7 +22,7 @@
 var CONFIG = {
   TICKET_PRICE: 25,
   MAX_TICKETS_PER_ORDER: 30,
-  FIRST_TICKET_NUMBER: 1001,
+  FIRST_TICKET_NUMBER: 67706201,
   NEDARIM_MOSAD: '7005953',
   NEDARIM_API_VALID: 'iOofx+nKL/', // לא סודי (לפי מרכז חב"ד); אפשר לדרוס ב-Script property
   NEDARIM_GROUPE: 'הגרלה יט כסלו תשפז',
