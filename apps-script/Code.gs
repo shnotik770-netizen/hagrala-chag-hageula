@@ -78,6 +78,7 @@ function doPost(e) {
       case 'adminToggleCoupon': requireAdmin_(body); return json_(adminToggleCoupon_(body));
       case 'adminApproveOrder': requireAdmin_(body); return json_(adminApproveOrder_(body));
       case 'adminResendSms': requireAdmin_(body); return json_(adminResendSms_(body));
+      case 'adminSetOpen': requireAdmin_(body); return json_(adminSetOpen_(body));
       default: return json_({ ok: false, error: 'פעולה לא מוכרת.' });
     }
   } catch (err) {
@@ -183,7 +184,16 @@ function fmtDate_(d) {
 }
 
 function publicConfig_() {
-  return { ok: true, price: CONFIG.TICKET_PRICE, maxTickets: CONFIG.MAX_TICKETS_PER_ORDER };
+  return { ok: true, price: CONFIG.TICKET_PRICE, maxTickets: CONFIG.MAX_TICKETS_PER_ORDER, open: isOpen_() };
+}
+
+/** האם ההרשמה פתוחה (נשלט מממשק הניהול). */
+function isOpen_() {
+  return prop_('REGISTRATION_OPEN') !== 'no';
+}
+
+function requireOpen_() {
+  if (!isOpen_()) throw userError_('ההרשמה להגרלה נסגרה.');
 }
 
 /* ======================= קופונים ======================= */
@@ -222,6 +232,7 @@ function validateCoupon_(code, qty) {
 }
 
 function checkCoupon_(body) {
+  requireOpen_();
   var qty = Math.max(1, Math.min(CONFIG.MAX_TICKETS_PER_ORDER, parseInt(body.qty, 10) || 1));
   var c = validateCoupon_(body.code, qty);
   return { ok: true, owner: c.owner, code: c.code };
@@ -249,6 +260,7 @@ function readOrderInput_(body) {
 }
 
 function createOrder_(body) {
+  requireOpen_();
   var input = readOrderInput_(body);
   var qty = input.names.length;
   var orderId = uuid_();     // סודי — נשלח לנדרים כ-Param2 ולא נחשף לדפדפן
@@ -544,7 +556,14 @@ function adminData_() {
     return { orderId: String(r[0]), created: fmtDate_(new Date(r[O.CREATED - 1])), qty: r[O.QTY - 1], amount: r[O.AMOUNT - 1],
       name: String(r[O.NAME - 1]), phone: String(r[O.PHONE - 1]).replace(/^'/, ''), txId: String(r[O.TXID - 1]), note: String(r[O.NOTE - 1]) };
   }).reverse();
-  return { ok: true, tickets: tickets, coupons: coupons, pending: pending, sheetUrl: ss_().getUrl() };
+  return { ok: true, tickets: tickets, coupons: coupons, pending: pending, sheetUrl: ss_().getUrl(), open: isOpen_() };
+}
+
+function adminSetOpen_(body) {
+  var open = body.open === true || body.open === 'true';
+  PropertiesService.getScriptProperties().setProperty('REGISTRATION_OPEN', open ? 'yes' : 'no');
+  log_('registration', open ? 'ההרשמה נפתחה' : 'ההרשמה נסגרה');
+  return { ok: true, open: open };
 }
 
 function adminAddCoupon_(body) {

@@ -270,6 +270,15 @@ section, #order-form { scroll-margin-top: 90px; }
 .side-note { margin-top: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; font-size: 14.5px; color: #5a4030; }
 .side-note b { color: var(--maroon); display: block; }
 
+.closed-box { max-width: 640px; margin: 0 auto; text-align: center; background: var(--paper); border: 2px solid var(--gold); border-radius: 22px; padding: 28px 20px; box-shadow: var(--shadow); }
+.closed-box b { display: block; font-family: var(--serif); font-size: 28px; color: var(--maroon); }
+.closed-box span { color: var(--muted); }
+.reg-toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.reg-toggle .state { font-weight: 900; font-size: 18px; }
+.reg-toggle .state.on { color: var(--ok); }
+.reg-toggle .state.off { color: var(--err); }
+.btn.red { background: var(--err); color: #fff; }
+
 /* ---------- Footer ---------- */
 .site-footer { background: var(--maroon-d); color: #e9cfb2; padding: 40px 0 34px; border-top: 4px solid var(--gold); }
 .site-footer .wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }

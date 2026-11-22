@@ -68,6 +68,7 @@
     $('st-coupon').textContent = t.filter(function (x) { return x.method === 'קוד קופון'; }).length;
     $('st-pending').textContent = data.pending.length;
     $('sheet-link').href = data.sheetUrl;
+    renderOpen(data.open !== false);
 
     // pending
     $('pending-card').hidden = !data.pending.length;
@@ -85,6 +86,23 @@
     }).join('') || '<tr><td colspan="6">אין עדיין קודים.</td></tr>';
 
     renderTickets();
+  }
+
+  function renderOpen(open) {
+    $('reg-state').textContent = open ? '● ההרשמה פתוחה' : '● ההרשמה סגורה';
+    $('reg-state').className = 'state ' + (open ? 'on' : 'off');
+    $('reg-btn').textContent = open ? 'עצירת ההרשמה' : 'פתיחת ההרשמה מחדש';
+    $('reg-btn').className = 'btn ' + (open ? 'red' : 'green');
+    $('reg-btn').dataset.open = open ? '1' : '0';
+    $('reg-btn').disabled = false;
+  }
+
+  function toggleOpen() {
+    var open = $('reg-btn').dataset.open === '1';
+    if (open && !window.confirm('לעצור את ההרשמה להגרלה באתר? הטופס יוסתר מהגולשים.')) return;
+    $('reg-btn').disabled = true;
+    api('adminSetOpen', { open: !open }).then(function (res) { data.open = res.open; renderOpen(res.open); })
+      .catch(function (e) { alertBox(e.message); $('reg-btn').disabled = false; });
   }
 
   function renderTickets() {
@@ -138,6 +156,7 @@
     $('login').addEventListener('submit', login);
     $('logout').onclick = function (e) { e.preventDefault(); logout(); };
     $('refresh').onclick = load;
+    $('reg-btn').onclick = toggleOpen;
     $('csv').onclick = csv;
     $('search').addEventListener('input', renderTickets);
     $('add-coupon').addEventListener('submit', function (e) {

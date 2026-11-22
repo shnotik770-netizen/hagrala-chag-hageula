@@ -187,7 +187,7 @@
   }
 
   function postNedarim(data) {
-    frame.contentWindow.postMessage(data, 'https://www.matara.pro');
+    frame.contentWindow.postMessage(data, '*'); // כמו בדוגמה הרשמית של נדרים
   }
 
   function loadFrame() {
@@ -203,7 +203,7 @@
     $('pay-loading').hidden = false;
     $('pay-modal').classList.add('open');
     state.lastOrderData = data;
-    var start = { Name: 'StartPayment', Value: { TransactionId: res.transactionId, Key: res.key, ButtonText: 'תשלום ' + res.amount + ' ₪' } };
+    var start = { Name: 'StartPayment', Value: { TransactionId: res.transactionId, Key: res.key } };
     pendingStart = start;
     loadFrame();
   }
@@ -290,8 +290,22 @@
     $('cd-m').textContent = m % 60;
   }
 
+  /* ---------------- סטטוס ההרשמה ---------------- */
+  function checkOpen() {
+    if (!CFG.API_URL || CFG.API_URL.indexOf('http') !== 0) return;
+    fetch(CFG.API_URL + '?action=config').then(function (r) { return r.json(); }).then(function (res) {
+      var closed = res && res.open === false;
+      $('closed-box').hidden = !closed;
+      $('order-form').hidden = closed;
+      document.querySelectorAll('a[href="#order-form"]').forEach(function (a) {
+        a.setAttribute('href', closed ? '#buy' : '#order-form');
+      });
+    }).catch(function () {});
+  }
+
   /* ---------------- אתחול ---------------- */
   function init() {
+    checkOpen();
     tick();
     setInterval(tick, 30000);
     initFrame();
