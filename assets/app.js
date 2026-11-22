@@ -171,26 +171,15 @@
 
   function initFrame() {
     frame = $('NedarimFrame');
-    // האייפרם של נדרים לא שולח גובה לפני שמקבל StartPayment — שולחים מיד כשהוא נטען
-    frame.addEventListener('load', function () {
-      if (!pendingStart || frame.src.indexOf('matara.pro') === -1) return;
-      var start = pendingStart;
-      setTimeout(function () {
-        if (pendingStart !== start) return;
-        postNedarim(start);
-        pendingStart = null;
-        frameReady = true;
-      }, 400);
-    });
     window.addEventListener('message', function (event) {
       if (!/(^|\.)matara\.pro$/.test(new URL(event.origin || 'http://x').hostname)) return;
       var msg = event.data || {};
-      if (msg.Name === 'Height') {
+      if (msg.Name === 'Ready') { // אייפרם v3: מוכן לקבל StartPayment
+        if (pendingStart) { postNedarim(pendingStart); pendingStart = null; }
+        frameReady = true;
+      } else if (msg.Name === 'Height') {
         frame.style.height = (parseInt(msg.Value, 10) + 15) + 'px';
-        if (!frameReady) {
-          frameReady = true;
-          if (pendingStart) { postNedarim(pendingStart); pendingStart = null; }
-        }
+        $('pay-loading').hidden = true;
       } else if (msg.Name === 'TransactionResponse') {
         onTransactionResponse(msg.Value || {});
       }
@@ -215,9 +204,8 @@
     $('pay-modal').classList.add('open');
     state.lastOrderData = data;
     var start = { Name: 'StartPayment', Value: { TransactionId: res.transactionId, Key: res.key, ButtonText: 'תשלום ' + res.amount + ' ₪' } };
-    loadFrame();
     pendingStart = start;
-    var hideLoading = setInterval(function () { if (frameReady) { $('pay-loading').hidden = true; clearInterval(hideLoading); } }, 200);
+    loadFrame();
   }
 
   function closePayment() {
