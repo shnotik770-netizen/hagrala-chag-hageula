@@ -270,6 +270,9 @@ section, #order-form { scroll-margin-top: 90px; }
 .side-note { margin-top: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; font-size: 14.5px; color: #5a4030; }
 .side-note b { color: var(--maroon); display: block; }
 
+.closed-banner { position: sticky; top: 74px; z-index: 25; background: linear-gradient(180deg, #ffe7a6, #d7aa4c); color: var(--maroon-d); text-align: center; font-weight: 900; font-size: 18px; padding: 12px 16px; border-bottom: 2px solid var(--gold-d); box-shadow: 0 6px 16px -10px rgba(79, 6, 17, .6); }
+@media (max-width: 640px) { .closed-banner { top: 64px; font-size: 15px; } }
+body.reg-closed .btn-buy, body.reg-closed .hero-cta .btn-gold { display: none; }
 .closed-box { max-width: 640px; margin: 0 auto; text-align: center; background: var(--paper); border: 2px solid var(--gold); border-radius: 22px; padding: 28px 20px; box-shadow: var(--shadow); }
 .closed-box b { display: block; font-family: var(--serif); font-size: 28px; color: var(--maroon); }
 .closed-box span { color: var(--muted); }
@@ -278,6 +281,9 @@ section, #order-form { scroll-margin-top: 90px; }
 .reg-toggle .state.on { color: var(--ok); }
 .reg-toggle .state.off { color: var(--err); }
 .btn.red { background: var(--err); color: #fff; }
+.closed-msg-edit { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.closed-msg-edit input { flex: 1; min-width: 240px; padding: 9px 12px; border-radius: 10px; border: 1px solid #ddc8a2; }
+.nav .site-link { color: var(--maroon) !important; font-weight: 800; }
 
 /* ---------- Footer ---------- */
 .site-footer { background: var(--maroon-d); color: #e9cfb2; padding: 40px 0 34px; border-top: 4px solid var(--gold); }

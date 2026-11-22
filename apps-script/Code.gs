@@ -30,7 +30,9 @@ var CONFIG = {
   YEMOT_SMS_URL: 'https://www.call2all.co.il/ym/api/SendSms',
   EVENT_TITLE: 'הגרלת הענק • התוועדות חג הגאולה י"ט-כ\' כסלו',
   EVENT_LINE: 'יום שני כ\' כסלו (30.11) • 19:30 • אולמי פאר בראשית',
-  ORG_NAME: 'מרכז חב"ד עפולה'
+  ORG_NAME: 'מרכז חב"ד עפולה',
+  EMAIL_FROM: 'chabadizrael@gmail.com',
+  CLOSED_MESSAGE: 'כעת אין שירות להירשם להגרלה • ההרשמה תיפתח בזמן הקרוב'
 };
 
 var SHEETS = {
@@ -184,7 +186,7 @@ function fmtDate_(d) {
 }
 
 function publicConfig_() {
-  return { ok: true, price: CONFIG.TICKET_PRICE, maxTickets: CONFIG.MAX_TICKETS_PER_ORDER, open: isOpen_() };
+  return { ok: true, price: CONFIG.TICKET_PRICE, maxTickets: CONFIG.MAX_TICKETS_PER_ORDER, open: isOpen_(), closedMessage: closedMessage_() };
 }
 
 /** האם ההרשמה פתוחה (נשלט מממשק הניהול). */
@@ -192,8 +194,12 @@ function isOpen_() {
   return prop_('REGISTRATION_OPEN') !== 'no';
 }
 
+function closedMessage_() {
+  return prop_('CLOSED_MESSAGE') || CONFIG.CLOSED_MESSAGE;
+}
+
 function requireOpen_() {
-  if (!isOpen_()) throw userError_('ההרשמה להגרלה נסגרה.');
+  if (!isOpen_()) throw userError_(closedMessage_());
 }
 
 /* ======================= קופונים ======================= */
@@ -506,11 +512,13 @@ function sendEmail_(order, tickets) {
     '<p style="margin:18px 0 0;font-style:italic;color:#7c0a18">"מי ששמח בשמחתי אוציאנו מן המיצר למרחב בגשמיות וברוחניות"</p>' +
     '</div></div>';
 
+  // נשלח מהחשבון שמריץ את הסקריפט; תשובות מגיעות לכתובת של מרכז חב"ד
   MailApp.sendEmail({
     to: order.email,
     subject: 'כרטיסי ההגרלה שלך • התוועדות חג הגאולה י"ט כסלו • ' + CONFIG.ORG_NAME,
     htmlBody: html,
-    name: CONFIG.ORG_NAME
+    name: CONFIG.ORG_NAME,
+    replyTo: CONFIG.EMAIL_FROM
   });
 }
 
@@ -527,12 +535,18 @@ function adminLogin_(body) {
     throw userError_('הכניסה נכשלה.');
   }
   var token = uuid_() + uuid_();
-  cache.put('admin_' + token, '1', 21600); // 6 שעות
+  var props = PropertiesService.getScriptProperties();
+  var now = Date.now();
+  // ניקוי כניסות שפג תוקפן
+  var all = props.getProperties();
+  Object.keys(all).forEach(function (k) { if (k.indexOf('sess_') === 0 && Number(all[k]) < now) props.deleteProperty(k); });
+  props.setProperty('sess_' + token, String(now + 24 * 3600 * 1000)); // 24 שעות
   return { ok: true, token: token };
 }
 
 function requireAdmin_(body) {
-  if (!body.token || !CacheService.getScriptCache().get('admin_' + body.token)) {
+  var exp = body.token ? Number(prop_('sess_' + body.token)) : 0;
+  if (!exp || exp < Date.now()) {
     throw userError_('נדרשת כניסה מחדש לממשק הניהול.');
   }
 }
@@ -556,14 +570,19 @@ function adminData_() {
     return { orderId: String(r[0]), created: fmtDate_(new Date(r[O.CREATED - 1])), qty: r[O.QTY - 1], amount: r[O.AMOUNT - 1],
       name: String(r[O.NAME - 1]), phone: String(r[O.PHONE - 1]).replace(/^'/, ''), txId: String(r[O.TXID - 1]), note: String(r[O.NOTE - 1]) };
   }).reverse();
-  return { ok: true, tickets: tickets, coupons: coupons, pending: pending, sheetUrl: ss_().getUrl(), open: isOpen_() };
+  return { ok: true, tickets: tickets, coupons: coupons, pending: pending, sheetUrl: ss_().getUrl(), open: isOpen_(), closedMessage: closedMessage_() };
 }
 
 function adminSetOpen_(body) {
   var open = body.open === true || body.open === 'true';
-  PropertiesService.getScriptProperties().setProperty('REGISTRATION_OPEN', open ? 'yes' : 'no');
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty('REGISTRATION_OPEN', open ? 'yes' : 'no');
+  if (body.message != null) {
+    var msg = clean_(body.message, 200);
+    if (msg) props.setProperty('CLOSED_MESSAGE', msg); else props.deleteProperty('CLOSED_MESSAGE');
+  }
   log_('registration', open ? 'ההרשמה נפתחה' : 'ההרשמה נסגרה');
-  return { ok: true, open: open };
+  return { ok: true, open: open, closedMessage: closedMessage_() };
 }
 
 function adminAddCoupon_(body) {

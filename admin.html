@@ -24,7 +24,7 @@
     <div class="wrap">
       <a class="logo" href="./"><svg viewBox="0 0 200 128" role="img" aria-label="חב״ד"><use href="#chabad-logo"/></svg>
         <span class="org"><b>מרכז חב"ד עפולה</b></span></a>
-      <nav class="nav"><a href="#" id="logout" hidden class="btn-buy">יציאה</a></nav>
+      <nav class="nav"><a href="./" target="_blank" rel="noopener" class="site-link">מעבר לאתר ההרשמה ↗</a><a href="#" id="logout" hidden class="btn-buy">יציאה</a></nav>
     </div>
   </header>
 
@@ -51,6 +51,10 @@
           <div class="state" id="reg-state">…</div>
         </div>
         <button class="btn" id="reg-btn" disabled>…</button>
+        <div class="closed-msg-edit" style="flex-basis:100%">
+          <input id="closed-msg-input" maxlength="200" placeholder="ההודעה שתוצג באתר כשההרשמה סגורה">
+          <button class="btn light" id="closed-msg-save">שמירת ההודעה</button>
+        </div>
       </div>
 
       <div class="card admin-card" id="pending-card" hidden>

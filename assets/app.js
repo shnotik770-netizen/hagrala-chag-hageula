@@ -295,6 +295,11 @@
     if (!CFG.API_URL || CFG.API_URL.indexOf('http') !== 0) return;
     fetch(CFG.API_URL + '?action=config').then(function (r) { return r.json(); }).then(function (res) {
       var closed = res && res.open === false;
+      var msg = (res && res.closedMessage) || 'כעת אין שירות להירשם להגרלה';
+      $('closed-banner').textContent = msg;
+      $('closed-banner').hidden = !closed;
+      $('closed-msg').textContent = msg;
+      document.body.classList.toggle('reg-closed', closed);
       $('closed-box').hidden = !closed;
       $('order-form').hidden = closed;
       document.querySelectorAll('a[href="#order-form"]').forEach(function (a) {

@@ -5,8 +5,8 @@
   var data = null;
   var KEY = 'hagrala_admin_token';
 
-  function getToken() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } }
-  function setToken(t) { try { t ? sessionStorage.setItem(KEY, t) : sessionStorage.removeItem(KEY); } catch (e) {} }
+  function getToken() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function setToken(t) { try { t ? localStorage.setItem(KEY, t) : localStorage.removeItem(KEY); } catch (e) {} }
 
   function api(action, extra) {
     var body = Object.assign({ action: action, token: getToken() }, extra || {});
@@ -69,6 +69,7 @@
     $('st-pending').textContent = data.pending.length;
     $('sheet-link').href = data.sheetUrl;
     renderOpen(data.open !== false);
+    if (document.activeElement !== $('closed-msg-input')) $('closed-msg-input').value = data.closedMessage || '';
 
     // pending
     $('pending-card').hidden = !data.pending.length;
@@ -101,7 +102,7 @@
     var open = $('reg-btn').dataset.open === '1';
     if (open && !window.confirm('לעצור את ההרשמה להגרלה באתר? הטופס יוסתר מהגולשים.')) return;
     $('reg-btn').disabled = true;
-    api('adminSetOpen', { open: !open }).then(function (res) { data.open = res.open; renderOpen(res.open); })
+    api('adminSetOpen', { open: !open, message: $('closed-msg-input').value }).then(function (res) { data.open = res.open; renderOpen(res.open); })
       .catch(function (e) { alertBox(e.message); $('reg-btn').disabled = false; });
   }
 
@@ -157,6 +158,12 @@
     $('logout').onclick = function (e) { e.preventDefault(); logout(); };
     $('refresh').onclick = load;
     $('reg-btn').onclick = toggleOpen;
+    $('closed-msg-save').onclick = function () {
+      var b = this; b.disabled = true;
+      api('adminSetOpen', { open: $('reg-btn').dataset.open === '1', message: $('closed-msg-input').value })
+        .then(function (res) { $('closed-msg-input').value = res.closedMessage; b.textContent = '✓ נשמר'; setTimeout(function () { b.textContent = 'שמירת ההודעה'; }, 1500); })
+        .catch(function (e) { alertBox(e.message); }).finally(function () { b.disabled = false; });
+    };
     $('csv').onclick = csv;
     $('search').addEventListener('input', renderTickets);
     $('add-coupon').addEventListener('submit', function (e) {
