@@ -11,8 +11,8 @@
  *  - ממשק ניהול מוגן בסיסמה.
  *
  * הגדרות (Project Settings > Script properties) — אף סוד לא נשמר בקוד:
- *  NEDARIM_MOSAD      מספר מוסד בנדרים פלוס (7005953)
- *  NEDARIM_API_VALID  סיסמת האימות (ApiValid)
+ *  NEDARIM_MOSAD      (אופציונלי) דורס את מספר המוסד שבקוד
+ *  NEDARIM_API_VALID  (אופציונלי) דורס את ApiValid שבקוד
  *  ADMIN_PASSWORD     סיסמת כניסה לממשק הניהול
  *  YEMOT_TOKEN        (אופציונלי) טוקן API של ימות המשיח לשליחת SMS
  *  YEMOT_SMS_FROM     (אופציונלי) שם שולח מאושר, למשל: חבד עפולה
@@ -23,6 +23,8 @@ var CONFIG = {
   TICKET_PRICE: 25,
   MAX_TICKETS_PER_ORDER: 30,
   FIRST_TICKET_NUMBER: 1001,
+  NEDARIM_MOSAD: '7005953',
+  NEDARIM_API_VALID: 'iOofx+nKL/', // לא סודי (לפי מרכז חב"ד); אפשר לדרוס ב-Script property
   NEDARIM_GROUPE: 'הגרלה יט כסלו תשפז',
   NEDARIM_CREATE_URL: 'https://matara.pro/nedarimplus/V6/Files/WebServices/DebitIframe.aspx?Action=CreateTransaction',
   YEMOT_SMS_URL: 'https://www.call2all.co.il/ym/api/SendSms',
@@ -278,8 +280,8 @@ function createOrder_(body) {
 }
 
 function nedarimCreateTransaction_(o) {
-  var mosad = prop_('NEDARIM_MOSAD');
-  var apiValid = prop_('NEDARIM_API_VALID');
+  var mosad = prop_('NEDARIM_MOSAD') || CONFIG.NEDARIM_MOSAD;
+  var apiValid = prop_('NEDARIM_API_VALID') || CONFIG.NEDARIM_API_VALID;
   var callback = prop_('WEB_APP_URL');
   if (!mosad || !apiValid) throw userError_('הסליקה עדיין לא הוגדרה. אנא פנו למרכז חב"ד.');
 

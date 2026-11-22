@@ -78,7 +78,7 @@
     } else {
       $('sum-disc-row').hidden = true;
       $('sum-total').textContent = total + ' ₪';
-      $('submit-text').textContent = 'המשך לתשלום מאובטח • ' + total + ' ₪';
+      $('submit-text').textContent = 'המשך לתשלום • ' + total + ' ₪';
     }
   }
 
@@ -281,8 +281,23 @@
     setQty(1);
   }
 
+  /* ---------------- ספירה לאחור ---------------- */
+  var EVENT_AT = new Date('2026-11-30T19:30:00+02:00').getTime();
+  function tick() {
+    var el = $('countdown');
+    if (!el) return;
+    var diff = EVENT_AT - Date.now();
+    if (diff <= 0) { el.hidden = true; return; }
+    var m = Math.floor(diff / 60000);
+    $('cd-d').textContent = Math.floor(m / 1440);
+    $('cd-h').textContent = Math.floor((m % 1440) / 60);
+    $('cd-m').textContent = m % 60;
+  }
+
   /* ---------------- אתחול ---------------- */
   function init() {
+    tick();
+    setInterval(tick, 30000);
     initFrame();
     renderNames();
     updateSummary();

@@ -5,16 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>ניהול הגרלה • חג הגאולה י"ט כסלו</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <div class="topbar">
+    <!-- לוגו חב"ד "כל הלב לכל אחד" -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="chabad-logo" viewBox="0 0 200 128">
+      <path d="M6 16 C60 4 140 2 194 12 L190 112 C136 124 62 126 10 118 Z" fill="#7a0c1c"/>
+      <path d="M6 16 C60 4 140 2 194 12 L190 112 C136 124 62 126 10 118 Z" fill="none" stroke="#c99a3c" stroke-width="3"/>
+      <g transform="translate(100 74) skewX(-12)">
+        <text x="0" y="0" text-anchor="middle" direction="rtl" font-family="Heebo, sans-serif" font-weight="900" font-size="66" fill="#fff" letter-spacing="-2">חב<tspan fill="#f1c766">״</tspan>ד</text>
+      </g>
+      <text x="100" y="104" text-anchor="middle" direction="rtl" font-family="Heebo, sans-serif" font-weight="500" font-size="17" fill="#fff">כל הלב לכל אחד</text>
+    </symbol>
+  </svg>
+  <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="./"><span class="brand-badge">חב"ד</span> ניהול הגרלת י"ט כסלו</a>
-      <div><a href="#" id="logout" hidden style="color:var(--gold-2);font-weight:700">יציאה</a></div>
+      <a class="logo" href="./"><svg viewBox="0 0 200 128" role="img" aria-label="חב״ד"><use href="#chabad-logo"/></svg>
+        <span class="org"><b>ניהול הגרלת י"ט כסלו</b><span>מרכז חב"ד עפולה</span></span></a>
+      <nav class="nav"><a href="#" id="logout" hidden class="btn-buy">יציאה</a></nav>
     </div>
-  </div>
+  </header>
 
   <div class="admin-wrap">
     <form class="card" id="login" style="max-width:420px;margin:40px auto;text-align:center">
