@@ -107,6 +107,8 @@
   }
 
   function renderTickets() {
+    var owners = {};
+    (data.coupons || []).forEach(function (c) { owners[String(c.code).toUpperCase()] = c.owner; });
     var q = $('search').value.trim().toLowerCase();
     var list = data.tickets.filter(function (x) {
       return !q || String(x.ticketNum).indexOf(q) > -1 || x.ticketName.toLowerCase().indexOf(q) > -1 ||
@@ -117,7 +119,7 @@
       var cp = x.method === 'קוד קופון';
       return '<tr><td><b style="color:var(--maroon)">#' + esc(x.ticketNum) + '</b></td><td style="white-space:nowrap">' + esc(x.date) + '</td><td><b>' + esc(x.ticketName) +
         '</b></td><td>' + esc(x.payerName) + '</td><td class="ltr">' + esc(x.phone) + '</td><td style="font-size:12px">' + esc(x.email || '-') +
-        '</td><td><span class="pill ' + (cp ? 'cp' : 'cc') + '">' + esc(cp ? 'קוד ' + x.ref : 'אשראי ' + x.ref) + '</span></td><td>' + esc(x.amount) + ' ₪</td>' +
+        '</td><td><span class="pill ' + (cp ? 'cp' : 'cc') + '">' + esc(cp ? (owners[String(x.ref).toUpperCase()] || 'קוד מורשה') : 'אשראי') + '</span></td><td>' + esc(x.amount) + ' ₪</td>' +
         '<td><button class="btn light" style="padding:4px 8px;font-size:12px" data-sms="' + esc(x.order) + '" title="שליחת SMS חוזרת למזמין">SMS</button></td></tr>';
     }).join('') || '<tr><td colspan="9">אין עדיין כרטיסים.</td></tr>';
   }
